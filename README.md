@@ -8,7 +8,40 @@ The toolkit has several command-line scripts that return formatted weather data.
 
 To obtain forecast data, forecast.py is used.  For quick and dirty forecasts, forecast.py will use the NOAA XML web service to obtain forecast information.  For more robust applications, users of forecast.py will want to use the grib2 option.  The grib2 option downloads NOAA grib2 files which provide forecast elements for the entire United States.  Querying grib2 data is much faster and efficient than querying the XML web service.
 
-    forecast.py (--hourly) (--grid2) [latitude] [longitude]
+    forecast.py (--hourly) (--grib2) [latitude] [longitude]
 
-Return values are JSON encoded arrays/objects. 
+Return values are JSON encoded array of the following format:
+
+    [
+        'daily' : [
+            *date* : [
+                'high' : *high*,
+                'low' : *low*,
+                'humidity' : *humidity*,
+                'precip_day' : *daytime % chance of precip*,
+                'precip_night' : *night time % chance of precip*,
+                'rain_amount' : *rain amount in inches*,
+                'snow_amount' : *snow amount in inches*,
+                'weather': *weather description*,
+                'symbol': *weather symbol used by NOAA*,
+                'wind_sustained': *sustained wind in MPH*,
+                'wind_gust': *wind gusts in MPH* 
+            ]
+        ],
+        'hourly' : [
+            *date* : [
+                *time* : [
+                    'temp' : *temperature*,
+                    'humidity' : *% humidity*,
+                    'precip' : *% chance of precipitation*,
+                    'rain_amount' : *rain amount in inches*,
+                    'snow_amount' : *snow amount in inches*,
+                    'sky' : *% cloud cover*:
+                    'weather: *weather description*,
+                    'wind_sustained': *sustained wind in MPH*,
+                    'wind_gust': *wind guests in MPH 
+                ]
+            ]
+        ]
+     ]   
 
