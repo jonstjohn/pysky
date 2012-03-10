@@ -1,10 +1,14 @@
+server = 'http://www.weather.gov/forecasts/xml/SOAP_server/ndfdXMLclient.php'
+params = [ 'maxt', 'temp', 'mint', 'pop12', 'sky', 'wspd', 'appt', 'qpf', 'snow', 'wx', 'wgust', 'icons', 'rh' ]
+
+
 def xml(latitude, longitude):
         
     import urllib, xml.parsers.expat
         
     param_strs = []
 
-    for param in self._soapParams:
+    for param in params:
 
         param_strs.append("%s=%s" % (param,param))
 
@@ -14,7 +18,7 @@ def xml(latitude, longitude):
     attempt = 1
     while attempt <= 10:
 
-        url = "%s?lat=%s&lon=%s&product=time-series&%s&Submit=Submit" % (self._soapServer, latitude, longitude, param_str) # construct URL
+        url = "%s?lat=%s&lon=%s&product=time-series&%s&Submit=Submit" % (server, latitude, longitude, param_str) # construct URL
 
         try: # try downloading and parsing data
             f = urllib.urlopen(url) # request URL

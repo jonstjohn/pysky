@@ -8,7 +8,7 @@ The toolkit has several command-line scripts that return formatted weather data.
 
 To obtain forecast data, forecast.py is used.  For quick and dirty forecasts, forecast.py will use the NOAA XML web service to obtain forecast information.  For more robust applications, users of forecast.py will want to use the grib2 option.  The grib2 option downloads NOAA grib2 files which provide forecast elements for the entire United States.  Querying grib2 data is much faster and efficient than querying the XML web service.
 
-    forecast.py (--hourly) (--grib2) [latitude] [longitude]
+    forecast.py (--hourly) (--grib2-dir) (--verbose) [latitude] [longitude]
 
 Return values are JSON encoded array of the following format:
 
@@ -45,3 +45,6 @@ Return values are JSON encoded array of the following format:
         ]
      ]   
 
+## Requirements
+
+If using grib2 files (not web service), the NOAA degrib library must be installed http://www.nws.noaa.gov/mdl/degrib/ .  In addition, the geodata directory included with the degrib source must be copied to the grid2 data directory.

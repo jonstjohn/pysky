@@ -1,13 +1,13 @@
 #!/usr/bin/python
 
-import grib2, dwml, forecast, noaa_ws
+import grib2, dwml, forecast, noaa_ws, json
 
 degrib_path = '/usr/local/bin/degrib'
 verbose = False
 
 def main(latitude, longitude, include_hourly = False, grib2_dir = None):
     """
-    Main method determines forecast based on latitude and longitude and returns JSON-formatted result
+    Main method determines forecast based on latitude and longitude and returns json-formatted result
 
     Args:
         latitude - forecast point latitude
@@ -15,7 +15,7 @@ def main(latitude, longitude, include_hourly = False, grib2_dir = None):
         include_hourly - flag to include hourly forecast, defaults to false
         grib2_dir - grib2 data directory, if not provided, the SOAP web service will be used
 
-    Returns: JSON-formatted string - see README
+    Returns: json-formatted string - see README
     """
 
     info("Latitude: {0}".format(latitude))
@@ -30,12 +30,13 @@ def main(latitude, longitude, include_hourly = False, grib2_dir = None):
         grib2.verbose = verbose
         grib2.download(grib2_dir)
         xml = grib2.xml(grib2_dir, latitude, longitude)
+        info(xml)
     else:
         xml = noaa_ws.xml(latitude, longitude)
+        info(xml)
 
-    return
     # Initialize object for data
-    return JSON.encode(process_xml(include_hourly)) # TODO fix JSON call
+    print(json.dumps(forecast.process_xml(xml, include_hourly))) # TODO fix json call
 
 def info(str):
 
@@ -63,9 +64,9 @@ if __name__ == '__main__':
 
     verbose = options.verbose
 
-    if len(args) != 2:
+    if len(args) != 1:
         parser.error("Latitude and longitude are required arguments")
 
-    latitude, longitude = args[0:2]
+    latitude, longitude = args[0].split(',')
 
     main(latitude, longitude, options.include_hourly, options.grib2_dir)

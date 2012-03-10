@@ -1,6 +1,7 @@
 # Base URL for downloading grib2 files
 base_url = 'http://weather.noaa.gov/pub/SL.us008001/ST.opnl/DF.gr2/DC.ndfd/AR.conus'
 noaa_params = ['maxt', 'temp', 'mint', 'pop12', 'sky', 'wspd', 'apt', 'qpf', 'snow', 'wx', 'wgust', 'icons', 'rhm']
+noaa_params = ['wx']
 
 verbose = False
 
@@ -13,31 +14,23 @@ def download(data_dir):
     """
     import urllib, re, os, sys
 
-    print(verbose)
-  
     # Loop over directories that have forecast data files
     for dir in ['VP.001-003','VP.004-007']: # loop over remote directories
 
+        data_subdir = "{0}/{1}".format(data_dir, dir)
+
+        info('Checking directory {0}'.format(dir))
+
+        if not os.path.exists(data_subdir):
+            os.mkdir(data_subdir)
+
         # Get directory listing
-        ls_url = "%s/%s/ls-l" % (base_url, dir)
-        f = urllib.urlopen(ls_url)
+        f = urllib.urlopen("{0}/{1}/ls-l".format(base_url, dir))
         data = f.read()
         lines = data.split("\n")
   
-        # TODO - replace this
-        p = re.compile("\s+") # regex used below
-  
-        # Change to data dir to get wget -N to work properly - TODO eliminate this chdir()
-        current_data_dir = "%s/%s" % (data_dir, dir)
-        #os.chdir(current_data_dir) TODO
-  
         # Loop over lines
         for line in lines: # loop over lines
-
-            # Suppose sample line is:
-            # text0 text1 text2 text3 text4 month day time filename.[param].bin?? TODO
-            print(line)
-            info(line)
 
             # Only process if this is a .bin file
             if line.find(".bin") != -1:
@@ -54,24 +47,22 @@ def download(data_dir):
                     info("%s last modified %s/%s @ %s" % (filename, month, day, time))
 
                     # Use wget -N to only download if last modified date has changed
-                    remote_filepath = "%s/%s/%s" % (base_url, dir, filename)
-                    cmd = "wget -N %s" % (remote_filepath)
-                    #os.popen(cmd)
-
-                return
-
-                # Cube data files if any were downloaded - TODO check to see if files were actually downloaded
-                cmd = "{degrib} {data_dir}/VP.001-003/*.bin {data_dir}/VP.004-007/*.bin -Data -Index {data_dir}/all.ind -out {data_dir}/all.dat".format(
-                    degrib = degrib_path,
-                    data_dir = data_dir
-                )
-                info(cmd)
-                output = ""
-                for line in os.popen(cmd).readlines():
-
-                    output += line
-
-                info(output)
+                    remote_path = "%s/%s/%s" % (base_url, dir, filename)
+                    local_path = "{0}/{1}/{2}".format(data_dir, dir, filename)
+                    urllib.urlretrieve (remote_path, local_path)
+                    
+    # Cube data files if any were downloaded - TODO check to see if files were actually downloaded
+    cmd = "{degrib} {data_dir}/VP.001-003/*.bin {data_dir}/VP.004-007/*.bin -Data -Index {data_dir}/all.ind -out {data_dir}/all.dat".format(
+        degrib = degrib_path,
+        data_dir = data_dir
+    )
+    info(cmd)
+    output = ""
+    for line in os.popen(cmd).readlines():
+    
+        output += line
+    
+    info(output)
 
 def xml(data_dir, latitude, longitude):
     """
