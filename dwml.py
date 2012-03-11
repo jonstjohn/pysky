@@ -1,18 +1,47 @@
 from xml.etree import ElementTree
 
+_codes =  {
+    'Daily Maximum Temperature' : 'maxt',
+    'Daily Minimum Temperature' : 'mint',
+    '12 Hourly Probability of Precipitation' : 'pop12',
+    'Temperature' : 'temp',
+    'Dew Point' : 'td',
+    'Apparent Temperature' : 'apt',
+    'Cloud Cover Amount' : 'sky',
+    'Wind Direction' : 'wdir',
+    'Wind Speed' : 'wspd',
+    'Wind Speed Gust' : 'wgust',
+    'Weather Type, Coverage, and Intensity' : 'wx',
+    'Liquid Precipitation Amount' : 'qpf',
+    'Snow Amount' : 'snow',
+    'Relative Humidity' : 'rhm',
+    'Conditions Icons' : 'sym'
+}
+
 # Parse xml string
 def parse_xml(xml):
         
     tree = ElementTree.fromstring(xml)
 
-    # Set timelayous
-    timelayouts = __parse_time_layouts(tree)
+    # Parse timelayouts
+    timelayouts = _parse_time_layouts(tree)
 
-    # Set parameters
-    data = __parse_parameter_data(tree, timelayouts)
+    # Parse parameter data
+    data = _parse_parameter_data(tree, timelayouts)
+
     return data
         
-def __parse_time_layouts(tree):
+def _parse_time_layouts(tree):
+    """
+    Parse time layouts
+
+    args:
+        tree - etree tree
+    returns:
+        dictionary of timelayouts
+            key is DWML unique layout key
+            value is list of start date and end date
+    """        
         
     timelayouts = {}
     for timelayout in tree.getiterator("time-layout"):
@@ -31,24 +60,24 @@ def __parse_time_layouts(tree):
                 timelayouts[currentKey].append(['',''])
                 xmlDate = child.text
                         
-                timelayouts[currentKey][position][0] = xmlDate
+                timelayouts[currentKey][position][0] = _convert_xml_date(xmlDate)
                     
             if (child.tag == 'end-valid-time'):
                     
                 xmlDate = child.text
                         
-                timelayouts[currentKey][position][1] = xmlDate
+                timelayouts[currentKey][position][1] = _convert_xml_date(xmlDate)
                     
     return timelayouts
         
-def __parse_parameter_data(tree, timelayouts):
+def _parse_parameter_data(tree, timelayouts):
         
     parameter_data = {}
         
     # Loop over parameters
     for parameters in tree.getiterator('parameters'):
             
-        currentName = ''
+        currentCode = ''
             
         # Loop over each parameter
         for parameter in parameters.getchildren():
@@ -64,9 +93,10 @@ def __parse_parameter_data(tree, timelayouts):
                     value = ''
                     if child.tag == 'name':
                             
-                        currentName = child.text
-                        parameter_data[currentName] = {
-                            'name': currentName, 
+                        name = child.text
+                        currentCode = _codes[name]
+                        parameter_data[currentCode] = {
+                            'name': name, 
                             'values': []
                             }
                         continue
@@ -98,11 +128,19 @@ def __parse_parameter_data(tree, timelayouts):
                     #if value is not None or child.tag == 'weather-conditions': # weather-conditions has blank values
                         #print timeLayoutKey
                         #print timelayouts[timeLayoutKey]
-                    parameter_data[currentName]['values'].append(
+                    start = timelayouts[timeLayoutKey][valueCount][0]
+                    startDate, startTime = start.split(' ') if len(start) else ['', '']
+                    end = timelayouts[timeLayoutKey][valueCount][1]
+                    endDate, endTime = end.split(' ') if len(end) else ['', '']
+                    parameter_data[currentCode]['values'].append(
                         { 
                             'value': value, 
-                            'start': timelayouts[timeLayoutKey][valueCount][0], 
-                            'end': timelayouts[timeLayoutKey][valueCount][1]
+                            'start': start,
+                            'startDate': startDate,
+                            'startTime': startTime,
+                            'end': end,
+                            'endDate': endDate,
+                            'endTime': endTime
                         }
                     )
                     
@@ -110,11 +148,11 @@ def __parse_parameter_data(tree, timelayouts):
 
     return parameter_data
                 
-def __get_xml_from_date_object(dateObject):
+def _get_xml_from_date_object(dateObject):
         
     return dateObject.strftime('%Y-%m-%dT%H:%M:%S+00:00')
     
-def __get_date_object_from_xml(xmlDate):
+def _get_date_object_from_xml(xmlDate):
         
     import datetime
     from datetime import timedelta
@@ -129,3 +167,15 @@ def __get_date_object_from_xml(xmlDate):
     offsetMinute = int(xmlDate[23:25])
     d = datetime.datetime(year, month, day, hour, min, sec)
     return d
+
+# Convert XML date to SQL
+def _convert_xml_date(xml_date):
+
+    if not len(xml_date):
+        return ''
+
+    sql_date, sql_time = xml_date.split('T')
+    sql_time, offset = sql_time.split('-')
+    hour, minute, second = sql_time.split(':')
+    sql_time = "%s:%s:%s" % (hour, minute, second)
+    return sql_date + ' ' + sql_time
