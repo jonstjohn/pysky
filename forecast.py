@@ -16,13 +16,17 @@ def process_xml(xml, include_hourly = False):
     # Parse DWML into python object
     xml_data = dwml.parse_xml(xml)
 
-    print(xml_data)
-    return
     return {'daily': _daily(xml_data), 'hourly': _hourly(xml_data)}
     #self._cleanup()
 
 def _daily(xml_data):
+    """
+    Get daily forecast data
 
+    args:
+        xml_data - dictionary returned from process_xml, see README
+    returns: list, see README
+    """
     daily_data = []
 
     # Organize data by date
@@ -32,10 +36,10 @@ def _daily(xml_data):
     for code in xml_data:
         for val_data in xml_data[code]['values']:
             date = val_data['startDate'] # Use start date as daily date
-            if date not in xml_data:
+            if date not in tmp_data:
                 tmp_data[date] = {}
-                daily_data[date] = {}
-            if code not in xml_data[date]:
+                #daily_data[date] = {}
+            if code not in tmp_data[date]:
                 tmp_data[date][code] = []
             tmp_data[date][code].append(val_data)
 
@@ -49,8 +53,8 @@ def _daily(xml_data):
         'high': {'code': 'maxt', 'aggregator': _first},
         'precip_day': {'code': 'pop12', 'aggregator': _first, 'pre_filter': _pre_precip_day},
         'precip_night': {'code': 'pop12', 'aggregator': _first, 'pre_filter': _pre_precip_night},
-        'rain_amount': {'code': 'qpf', 'aggregator': sum, 'pre_filter': _pre_rain_amount, 'formatter': _format_precip},
-        'snow_amount': {'code': 'qpf', 'aggregator': sum, 'pre_filter': _pre_snow_amount, 'formatter': _format_precip},
+        'rain_amount': {'code': 'qpf', 'aggregator': sum, 'pre_filter': _pre_rain_amount},
+        'snow_amount': {'code': 'snow', 'aggregator': sum, 'pre_filter': _pre_snow_amount},
         'relative_humidity': {'code': 'rhm', 'aggregator': _average},
         'wind_gust': {'code': 'wgust', 'aggregator': max, 'formatter': _format_wind},
         'wind_sustained': {'code': 'wspd', 'aggregator': _average, 'formatter': _format_wind},
@@ -59,34 +63,78 @@ def _daily(xml_data):
     }
 
     # Loop over tmp_data
-    for date in tmp_data:
-        for key in config:
+    for date in tmp_data: # date
+        date_data = {'date': date}
+        for key in config: # key
             code = config[key]['code']
-            if code in daily_data[date]:
-                daily_data[date][code] = _aggregate_values(
-                    code, 
-                    aggregators[code],
-                    pre_filters[code] if code in pre_filters else None,
-                    formatters[code] if code in formatters else None
+            if code in tmp_data[date]:
+                date_data[code] = _aggregate_values(
+                    tmp_data[date][code], 
+                    config[key]['aggregator'],
+                    config[key]['pre_filter'] if 'pre_filter' in config[key] else None,
+                    config[key]['formatter'] if 'formatter' in config[key] else None
                 )
+
+        daily_data.append(date_data)
 
     return daily_data
 
-    #daily_data[date][code] = _aggregate_values(tmp_data[date][code])
-    #data = {} 
-    #forecastData['daily'][date][label] = _aggregate(xml_data, 'maxt', 'high', 'first')
-    #_dailyLow()
-    #_aggregate('pop12', 'precip_day', 'first', skipFunction = self._skipDailyPrecipDay)
-    #_aggregae('pop12', 'precip_night', 'first', skipFunction = self._skipDailyPrecipNight)
-    #_aggregate('qpf', 'rain_amount', 'sum', True, 2, skipFunction = self._skipRain)
-    #_aggregate('snow', 'snow_amount', 'sum', True, 1, skipFunction = self._skipSnow)
-    #_aggregate('rhm', 'relative_humidity', 'average')
-    #_aggregate('wgust', 'wind_gust', 'max', formatFunction = self._formatWind)
-    #_aggregate('wspd',  'wind_sustained', 'average', formatFunction = self._formatWind)
-    #_aggregate('wx', 'weather', 'first-nonempty', False, formatFunction = self._formatWeather, 
-    #                skipFunction = self._skipDailyWeather)
-    #_aggregate('sym', 'wsym', 'frequent', False, formatFunction = self._formatSymbol, 
-    #                skipFunction = self._skipDailySymbol)
+def _hourly(xml_data):
+    """
+    Get hourly forecast data
+
+    args:
+        xml_data - dictionary returned from process_xml, see README
+    returns: list, see README
+    """
+    # Organize data by date/time
+    #       tmp_data[*date*][*time*][*code*] = *value*
+    tmp_data = {}
+    for code in xml_data:
+        for val_data in xml_data[code]['values']:
+            date = val_data['startDate']
+            time = val_data['startTime']
+            if date not in tmp_data:
+                tmp_data[date] = {}
+            if time not in tmp_data[date]:
+                tmp_data[date][time] = {}
+            tmp_data[date][time][code] = val_data['value']
+
+    
+    config = {
+        'temp': {'code': 'temp'},
+        'precip': {'code': 'pop12'},
+        'relative_humidity': {'code': 'rhm'},
+        'rain_amount': {'code': 'qpf'},
+        'snow_amount': {'code': 'snow'},
+        'wind_gust': {'code': 'wgust', 'formatter': _format_wind},
+        'wind_sustained': {'code': 'wspd', 'formatter': _format_wind},
+        'sky': {'code': 'sky'},
+        'weather': {'code': 'wx', 'formatter': _format_weather},
+        'wsym': {'code': 'sym', 'formatter': _format_wsym}
+    }
+
+    # Sort into correct order
+    date_times = []
+    for date in tmp_data:
+        for time in tmp_data[date]:
+            date_times.append("{0} {1}".format(date, time))
+
+    date_times.sort()
+
+    # Add to hourly data list
+    hourly_data = []
+    for dt in date_times:
+        date, time = dt.split(' ')
+        time_data = {'date': date, 'time': time}
+        for key in config:
+            code = config[key]['code']
+            if code in tmp_data[date][time]:
+                val = tmp_data[date][time][code] if 'formatter' not in config[key] else config[key]['formatter'](tmp_data[date][time][code])
+                time_data[code] = val 
+        hourly_data.append(time_data)
+
+    return hourly_data
 
 def _first(values):
     """
@@ -94,7 +142,7 @@ def _first(values):
     Arg: values - list of values
     Returns: first value
     """
-    return values[0]
+    return values[0] if len(values) else None
 
 def _average(values):
 
@@ -103,7 +151,10 @@ def _average(values):
     Arg: values - list of values
     Returns: average value
     """
-    return sum(values)/len(values)
+    if not len(values):
+     return None
+
+    return sum([float(x) for x in values])/len(values)
 
 def _first_nonempty(values):
     """
@@ -111,7 +162,10 @@ def _first_nonempty(values):
     Args: values - list of values
     Returns: first non-empty value
     """
-    for val in vals:
+    if not len(values):
+        return None
+
+    for val in values:
         if len(val) > 0:
             return val
 
@@ -121,15 +175,19 @@ def _frequent(values):
     Args: values - list of values
     Returns: most frequently appearing value
     """
+    if not len(values):
+        return None
+
     counts = {}
-    for val in vals:
+    for val in values:
         if not counts.has_key(val):
             counts[val] = 0
-        counts[val] = counts[val] + 1
+        counts[val] += 1
     maxCount = 0
     for k, v in counts.iteritems():
         if v > maxCount:
             val = k
+            maxCount = v
     return val
 
 def _aggregate_values(value_data, aggregator, pre_filter=None, formatter=None):
@@ -149,7 +207,7 @@ def _aggregate_values(value_data, aggregator, pre_filter=None, formatter=None):
 
     # Apply formatter
     if formatter:
-        val = formatter(values)
+        val = formatter(val)
 
     return val
 
@@ -215,7 +273,7 @@ def _format_weather(value):
     Format function for weather
     """
     # Check for format
-    if len(value.strip('|').split('|')) < 3:
+    if not value or len(value.strip('|').split('|')) < 3:
         return ''
 
     # Get coverage, intensity and weather type elements

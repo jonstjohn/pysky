@@ -1,7 +1,7 @@
 # Base URL for downloading grib2 files
 base_url = 'http://weather.noaa.gov/pub/SL.us008001/ST.opnl/DF.gr2/DC.ndfd/AR.conus'
 noaa_params = ['maxt', 'temp', 'mint', 'pop12', 'sky', 'wspd', 'apt', 'qpf', 'snow', 'wx', 'wgust', 'icons', 'rhm']
-noaa_params = ['wx']
+#noaa_params = ['wx']
 
 verbose = False
 
