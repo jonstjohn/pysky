@@ -12,9 +12,10 @@ To obtain forecast data, forecast.py is used.  For quick and dirty forecasts, fo
 
 Return values are JSON encoded array of the following format:
 
-    [
+    { 
         'daily' : [
-            *date* : [
+            {
+                'date' : *date*
                 'high' : *high*,
                 'low' : *low*,
                 'humidity' : *humidity*,
@@ -26,22 +27,22 @@ Return values are JSON encoded array of the following format:
                 'symbol': *weather symbol used by NOAA*,
                 'wind_sustained': *sustained wind in MPH*,
                 'wind_gust': *wind gusts in MPH* 
-            ]
+            }, ...
         ],
         'hourly' : [
-            *date* : [
-                *time* : [
-                    'temp' : *temperature*,
-                    'humidity' : *% humidity*,
-                    'precip' : *% chance of precipitation*,
-                    'rain_amount' : *rain amount in inches*,
-                    'snow_amount' : *snow amount in inches*,
-                    'sky' : *% cloud cover*:
-                    'weather: *weather description*,
-                    'wind_sustained': *sustained wind in MPH*,
-                    'wind_gust': *wind guests in MPH 
-                ]
-            ]
+            {
+                'date' : *date*,
+                'time' : *time*,
+                'temp' : *temperature*,
+                'humidity' : *% humidity*,
+                'precip' : *% chance of precipitation*,
+                'rain_amount' : *rain amount in inches*,
+                'snow_amount' : *snow amount in inches*,
+                'sky' : *% cloud cover*:
+                'weather: *weather description*,
+                'wind_sustained': *sustained wind in MPH*,
+                'wind_gust': *wind guests in MPH 
+            }, ...
         ]
      ]   
 

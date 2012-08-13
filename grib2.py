@@ -11,6 +11,9 @@ degrib_path = '/usr/local/bin/degrib'
 def download(data_dir):
     """
     Download grib2 files to data directory
+
+    args:
+        data_dir Directory to store data files
     """
     import urllib, re, os, sys
 
@@ -21,24 +24,25 @@ def download(data_dir):
 
         info('Checking directory {0}'.format(dir))
 
+        # Create directory if it doesn't exist
         if not os.path.exists(data_subdir):
             os.mkdir(data_subdir)
 
-        # Get directory listing
+        # Get directory listing so we can see if we need a newer version
         f = urllib.urlopen("{0}/{1}/ls-l".format(base_url, dir))
         data = f.read()
         lines = data.split("\n")
   
-        # Loop over lines
-        for line in lines: # loop over lines
+        # Loop over lines in directory listing
+        for line in lines:
 
-            # Only process if this is a .bin file
+            # Check file modified date if this is a .bin file
             if line.find(".bin") != -1:
 
-                # Split line to get information
+                # Split line to get date and filename
                 month, day, time, filename = re.split("\s+", line)[5:9]
 
-                # Split filename to get param
+                # Split filename to get noaa param name
                 param = filename.split('.')[1]
 
                 # Only download files if we are interested in this parameter

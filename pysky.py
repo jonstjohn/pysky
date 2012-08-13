@@ -5,7 +5,7 @@ import grib2, dwml, forecast, noaa_ws, json
 degrib_path = '/usr/local/bin/degrib'
 verbose = False
 
-def main(latitude, longitude, include_hourly = False, grib2_dir = None):
+def get_forecast(latitude, longitude, include_hourly = False, grib2_dir = None):
     """
     Main method determines forecast based on latitude and longitude and returns json-formatted result
 
@@ -13,7 +13,7 @@ def main(latitude, longitude, include_hourly = False, grib2_dir = None):
         latitude - forecast point latitude
         longitude - forecast point longitude
         include_hourly - flag to include hourly forecast, defaults to false
-        grib2_dir - grib2 data directory, if not provided, the SOAP web service will be used
+        grib2_dir - grib2 data directory, if omitted, the SOAP web service will be used
 
     Returns: json-formatted string - see README
     """
@@ -25,12 +25,12 @@ def main(latitude, longitude, include_hourly = False, grib2_dir = None):
     if grib2_dir:
         info("Using grib2 dir: {0}".format(grib2_dir))
 
-    # If using grib2, use rsync to download if newer data files exist
+    # If grib2 directory is provided, use grib2 files
     if grib2_dir:
         grib2.verbose = verbose
-        grib2.download(grib2_dir)
         xml = grib2.xml(grib2_dir, latitude, longitude)
         info(xml)
+    # Otherwise, use SOAP web service
     else:
         xml = noaa_ws.xml(latitude, longitude)
         info(xml)
@@ -38,8 +38,27 @@ def main(latitude, longitude, include_hourly = False, grib2_dir = None):
     # Initialize object for data
     print(json.dumps(forecast.process_xml(xml, include_hourly))) # TODO fix json call
 
-def info(str):
+def download(grib2_dir = None):
+    """
+    Download grib2 files
 
+    Args:
+        grib2_dir - grib2 data directory, if omitted, the current directory is used
+    """
+    import os
+
+    grib2.verbose = verbose
+    grib2_dir = grib2_dir if grib2_dir else os.path.realpath(__file__) # use current dir if none provided
+    grib2.download(grib2_dir)
+
+
+def info(str):
+    """
+    Print info string, to STDOUT when verbose mode is enabled
+
+    Args:
+        str - info string
+    """
     if verbose:
 
         print(str)
@@ -48,8 +67,10 @@ def info(str):
 if __name__ == '__main__':
 
     from optparse import OptionParser
-    usage = "usage: %prog [options] latitude longitude"
+
+    usage = "usage:\n%prog download [options]\n%prog forecast [options] LATITUDE LONGITUDE"
     parser = OptionParser(usage)
+
     parser.add_option('-o', '--hourly', dest='include_hourly', default=False,
         action='store_true',
         help='Include hourly forecast')
@@ -62,11 +83,24 @@ if __name__ == '__main__':
 
     (options, args) = parser.parse_args()
 
+    # Get action, either 'forecast' or 'download'
+    if len(args) == 0 or args[0] not in ('download', 'forecast'):
+        parser.error("Action 'download' or 'forecast' is required as the first argument")
+
+    action = args[0]
     verbose = options.verbose
 
-    if len(args) != 1:
-        parser.error("Latitude and longitude are required arguments")
+    # Download action
+    if action == 'download':
 
-    latitude, longitude = args[0].split(',')
+        download(options.grib2_dir)
 
-    main(latitude, longitude, options.include_hourly, options.grib2_dir)
+    # Forecast action
+    elif action == 'forecast':
+        
+        if len(args) != 3:
+            parser.error("Latitude and longitude are required arguments")
+
+        latitude = args[1]
+        longitude = args[2]
+        get_forecast(latitude, longitude, options.include_hourly, options.grib2_dir)
