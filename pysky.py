@@ -36,7 +36,8 @@ def get_forecast(latitude, longitude, include_hourly = False, grib2_dir = None):
         info(xml)
 
     # Initialize object for data
-    print(json.dumps(forecast.process_xml(xml, include_hourly))) # TODO fix json call
+    print(forecast.process_xml(xml, include_hourly)) # TODO fix json call
+    #print(json.dumps(forecast.process_xml(xml, include_hourly))) # TODO fix json call
 
 def download(grib2_dir = None):
     """

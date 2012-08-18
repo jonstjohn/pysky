@@ -3,6 +3,26 @@ import dwml
 _hourly_params = { 'snow': 'snow', 'temp': 'temp', 'humidity': 'rhm', 'precip': 'pop12',
      'sky': 'sky', 'weather': 'wx', 'symbol': 'sym', 'wind_gust': 'wgust', 'wind_sustained': 'wspd'}
 
+class forecastData(dict):
+
+    def __repr__(self):
+
+        str = "Hourly:\n"
+        date = ''
+        for h in self['hourly']:
+            if  date != h['date']:
+                str += "  {0}\n".format(h['date'])
+                date = h['date']
+            str += "    {0} -- ".format(h['time'])
+            for param in ('temp', 'pop12', 'snow', 'sky', 'wgust', 'wspd', 'rhm', 'sym', 'wx'):
+                if param in h:
+                    str += "{0}: {1} ".format(param, h[param] if len(h[param]) else '-')
+
+            str += "\n"
+        str += "Test\n"
+        return str
+        return 'haha'
+
 def process_xml(xml, include_hourly = False):
     """
     Process XML string and return forecast data
@@ -16,7 +36,7 @@ def process_xml(xml, include_hourly = False):
     # Parse DWML into python object
     xml_data = dwml.parse_xml(xml)
 
-    return {'daily': _daily(xml_data), 'hourly': _hourly(xml_data)}
+    return forecastData({'daily': _daily(xml_data), 'hourly': _hourly(xml_data)})
     #self._cleanup()
 
 def _daily(xml_data):
