@@ -1,12 +1,14 @@
 import dwml
 
-_hourly_params = { 'snow': 'snow', 'temp': 'temp', 'humidity': 'rhm', 'precip': 'pop12',
+_hourly_params = { 'snow_amount': 'snow', 'temp': 'temp', 'humidity': 'rhm', 'precip': 'pop12', 'rain_amount': 'qpf',
      'sky': 'sky', 'weather': 'wx', 'symbol': 'sym', 'wind_gust': 'wgust', 'wind_sustained': 'wspd'}
 
 class forecastData(dict):
 
     def __repr__(self):
-
+        """
+        Display forecast data dictionary as well-formatted string
+        """
         str = "Hourly:\n"
         date = ''
         for h in self['hourly']:
@@ -14,14 +16,20 @@ class forecastData(dict):
                 str += "  {0}\n".format(h['date'])
                 date = h['date']
             str += "    {0} -- ".format(h['time'])
-            for param in ('temp', 'pop12', 'snow', 'sky', 'wgust', 'wspd', 'rhm', 'sym', 'wx'):
+            for param in ('temp', 'precip', 'rain_amount', 'snow_amount', 'sky', 'wind_gust', 'wind_sustained', 'humidity', 'symbol', 'weather'):
                 if param in h:
                     str += "{0}: {1} ".format(param, h[param] if len(h[param]) else '-')
-
             str += "\n"
-        str += "Test\n"
+
+        str += "Daily:\n"
+        for d in self['daily']:
+            str += "  {0} -- ".format(d['date'])
+            for param in ('high', 'low', 'precip_day', 'precip_night', 'rain_amount', 'snow_amount', 'humidity', 'wind_speed', 'wind_gust', 'symbol', 'weather'):
+                if param in d:
+                    str += "{0}: {1} ".format(param, d[param] if d[param] else '-')
+            str += "\n"
+
         return str
-        return 'haha'
 
 def process_xml(xml, include_hourly = False):
     """
@@ -48,7 +56,6 @@ def _daily(xml_data):
     returns: list, see README
     """
     daily_data = []
-
     # Organize data by date
     #   Format will be tmp_data with date as keys
     #       tmp_data[*date*][*code*] = {values: [*vals*], startDate: *startDate*, endDate: *endDate*}
@@ -63,32 +70,16 @@ def _daily(xml_data):
                 tmp_data[date][code] = []
             tmp_data[date][code].append(val_data)
 
-    # Parsing configuration
-    # Includes:
-    #   DWML NOAA code - required
-    #   aggregator: determines how to aggregate the data - required
-    #   pre-filter: method that takes values as arguments and returns values that should be aggregated
-    #   formatter: method that applies formatting to resulting aggregated value
-    config = {
-        'high': {'code': 'maxt', 'aggregator': _first},
-        'precip_day': {'code': 'pop12', 'aggregator': _first, 'pre_filter': _pre_precip_day},
-        'precip_night': {'code': 'pop12', 'aggregator': _first, 'pre_filter': _pre_precip_night},
-        'rain_amount': {'code': 'qpf', 'aggregator': sum, 'pre_filter': _pre_rain_amount},
-        'snow_amount': {'code': 'snow', 'aggregator': sum, 'pre_filter': _pre_snow_amount},
-        'relative_humidity': {'code': 'rhm', 'aggregator': _average},
-        'wind_gust': {'code': 'wgust', 'aggregator': max, 'formatter': _format_wind},
-        'wind_sustained': {'code': 'wspd', 'aggregator': _average, 'formatter': _format_wind},
-        'weather': {'code': 'wx', 'aggregator': _first_nonempty, 'pre_filter': _pre_weather, 'formatter': _format_weather},
-        'wsym': {'code': 'sym', 'aggregator': _frequent, 'pre_filter': _pre_wsym, 'formatter': _format_wsym}
-    }
-
     # Loop over tmp_data
-    for date in tmp_data: # date
+    config = _daily_config
+    dates = tmp_data.keys()
+    dates.sort()
+    for date in dates: # date
         date_data = {'date': date}
         for key in config: # key
             code = config[key]['code']
             if code in tmp_data[date]:
-                date_data[code] = _aggregate_values(
+                date_data[key] = _aggregate_values(
                     tmp_data[date][code], 
                     config[key]['aggregator'],
                     config[key]['pre_filter'] if 'pre_filter' in config[key] else None,
@@ -110,7 +101,7 @@ def _hourly(xml_data):
     # Organize data by date/time
     #       tmp_data[*date*][*time*][*code*] = *value*
     tmp_data = {}
-    for code in xml_data:
+    for code in _hourly_params.itervalues():
         for val_data in xml_data[code]['values']:
             date = val_data['startDate']
             time = val_data['startTime']
@@ -119,21 +110,8 @@ def _hourly(xml_data):
             if time not in tmp_data[date]:
                 tmp_data[date][time] = {}
             tmp_data[date][time][code] = val_data['value']
-
+    config = _hourly_config
     
-    config = {
-        'temp': {'code': 'temp'},
-        'precip': {'code': 'pop12'},
-        'relative_humidity': {'code': 'rhm'},
-        'rain_amount': {'code': 'qpf'},
-        'snow_amount': {'code': 'snow'},
-        'wind_gust': {'code': 'wgust', 'formatter': _format_wind},
-        'wind_sustained': {'code': 'wspd', 'formatter': _format_wind},
-        'sky': {'code': 'sky'},
-        'weather': {'code': 'wx', 'formatter': _format_weather},
-        'wsym': {'code': 'sym', 'formatter': _format_wsym}
-    }
-
     # Sort into correct order
     date_times = []
     for date in tmp_data:
@@ -151,9 +129,8 @@ def _hourly(xml_data):
             code = config[key]['code']
             if code in tmp_data[date][time]:
                 val = tmp_data[date][time][code] if 'formatter' not in config[key] else config[key]['formatter'](tmp_data[date][time][code])
-                time_data[code] = val 
+                time_data[key] = val 
         hourly_data.append(time_data)
-
     return hourly_data
 
 def _first(values):
@@ -304,20 +281,20 @@ def _format_weather(value):
 
     # Get intensity from intensity element
     intensity = intensity_element.split(':')[1]
-    if intensity == 'none':
-        intensity = ''
-
     weather = weather_type_element.split(':')[1]
+
+    if intensity != 'none':
+        weather = "{0} {1}".format(intensity, weather)
 
     str = ''
     if coverage == 'likely':
-        str = "%s %s %s" % (intensity, weather, coverage)
+        str = "{0} {1}".format(weather, coverage)
     elif coverage == 'chance' or coverage == 'slight chance':
-        str = "%s of %s %s" % (coverage, intensity, weather)
+        str = "{0} of {1}".format(coverage, weather)
     elif coverage == 'definitely':
-        str = "%s %s" % (intensity, weather)
+        str = weather
     else:
-        str = "%s %s %s" % (coverage, intensity, weather)
+        str = "{0} {1}".format(coverage, weather)
 
     return str
 
@@ -327,6 +304,41 @@ def _format_wsym(value):
     Form function for symbols, return only image
     """
     return value.split('/')[-1] if value else ''
+
+# Parsing configuration
+# Includes:
+#   DWML NOAA code - required
+#   aggregator: determines how to aggregate the data - required
+#   pre-filter: method that takes values as arguments and returns values that should be aggregated
+#   formatter: method that applies formatting to resulting aggregated value
+_daily_config = {
+    'high': {'code': 'maxt', 'aggregator': _first},
+    'low': {'code': 'mint', 'aggregator': _first},
+    'precip_day': {'code': 'pop12', 'aggregator': _first, 'pre_filter': _pre_precip_day},
+    'precip_night': {'code': 'pop12', 'aggregator': _first, 'pre_filter': _pre_precip_night},
+    'rain_amount': {'code': 'qpf', 'aggregator': sum, 'pre_filter': _pre_rain_amount},
+    'snow_amount': {'code': 'snow', 'aggregator': sum, 'pre_filter': _pre_snow_amount},
+    'humidity': {'code': 'rhm', 'aggregator': _average},
+    'wind_gust': {'code': 'wgust', 'aggregator': max, 'formatter': _format_wind},
+    'wind_sustained': {'code': 'wspd', 'aggregator': _average, 'formatter': _format_wind},
+    'weather': {'code': 'wx', 'aggregator': _first_nonempty, 'pre_filter': _pre_weather, 'formatter': _format_weather},
+    'symbol': {'code': 'sym', 'aggregator': _frequent, 'pre_filter': _pre_wsym, 'formatter': _format_wsym}
+}
+
+_hourly_config = {
+    'temp': {'code': 'temp'},
+    'precip': {'code': 'pop12'},
+    'humidity': {'code': 'rhm'},
+    'rain_amount': {'code': 'qpf'},
+    'snow_amount': {'code': 'snow'},
+    'wind_gust': {'code': 'wgust', 'formatter': _format_wind},
+    'wind_sustained': {'code': 'wspd', 'formatter': _format_wind},
+    'sky': {'code': 'sky'},
+    'weather': {'code': 'wx', 'formatter': _format_weather},
+    'symbol': {'code': 'sym', 'formatter': _format_wsym}
+}
+
+
 
 # Aggregate 3-hour values using a function
 # @param int code Noaa parameter code

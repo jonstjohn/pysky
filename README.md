@@ -58,3 +58,9 @@ Output for the forecast action are JSON encoded values of the following format:
 ## Requirements
 
 If using grib2 files (not web service), the NOAA degrib library must be installed http://www.nws.noaa.gov/mdl/degrib/ .  In addition, the geodata directory included with the degrib source must be copied to the grid2 data directory.
+
+## TODO
+
+- Use hourly lowest temperature as daily low, if lower than regular daily low
+
+

@@ -5,59 +5,59 @@ import forecast
 class TestForecast(unittest.TestCase):
 
     expected_hourly = [
-        {'date': '2012-03-17', 'snow': u'0.00', 'qpf': u'0.00', 'pop12': u'34', 'time': '08:00:00'},
-        {'temp': u'68', 'sky': u'69', 'qpf': u'0.00', 'snow': u'0.00', 'sym': u'shra30.jpg', 'wgust': '5.8', 'rhm': u'55', 'wspd': '5.8', 'time': '14:00:00', 'date': '2012-03-17', 'wx': u'slight chance of light rain showers'},
-        {'temp': u'72', 'sky': u'72', 'sym': u'tsra30.jpg', 'wgust': '5.8', 'rhm': u'46', 'wspd': '5.8', 'time': '17:00:00', 'date': '2012-03-17', 'wx': u'chance of light rain showers'},
-        {'temp': u'66', 'sky': u'78', 'qpf': u'0.02', 'snow': u'0.00', 'sym': u'ntsra30.jpg', 'wgust': '3.5', 'rhm': u'58', 'pop12': u'38', 'wspd': '3.5', 'time': '20:00:00', 'date': '2012-03-17', 'wx': u'chance of light rain showers'},
-        {'temp': u'61', 'sky': u'82', 'sym': u'ntsra40.jpg', 'wgust': '3.5', 'rhm': u'70', 'wspd': '3.5', 'time': '23:00:00', 'date': '2012-03-17', 'wx': u'chance of light rain showers'},
-        {'temp': u'59', 'sky': u'86', 'qpf': u'0.02', 'snow': u'0.00', 'sym': u'nra40.jpg', 'wgust': '2.3', 'rhm': u'77', 'wspd': '2.3', 'time': '02:00:00', 'date': '2012-03-18', 'wx': u'chance of light rain showers'},
-        {'temp': u'57', 'sky': u'91', 'sym': u'nra40.jpg', 'wgust': '2.3', 'rhm': u'84', 'wspd': '2.3', 'time': '05:00:00', 'date': '2012-03-18', 'wx': u'chance of light rain showers'},
-        {'temp': u'55', 'sky': u'95', 'qpf': u'0.06', 'snow': u'0.00', 'sym': u'shra40.jpg', 'wgust': '4.6', 'rhm': u'83', 'pop12': u'41', 'wspd': '3.5', 'time': '08:00:00', 'date': '2012-03-18', 'wx': u'chance of light rain showers'},
-        {'temp': u'63', 'sky': u'89', 'sym': u'shra40.jpg', 'wgust': '6.9', 'rhm': u'70', 'wspd': '5.8', 'time': '11:00:00', 'date': '2012-03-18', 'wx': u'chance of light rain showers'},
-        {'temp': u'68', 'sky': u'84', 'qpf': u'0.04', 'snow': u'0.00', 'sym': u'tsra40.jpg', 'wgust': '9.2', 'rhm': u'61', 'wspd': '6.9', 'time': '14:00:00', 'date': '2012-03-18', 'wx': u'chance of  thunderstorms'},
-        {'temp': u'70', 'sky': u'78', 'sym': u'tsra40.jpg', 'wgust': '8.1', 'rhm': u'53', 'wspd': '5.8', 'time': '17:00:00', 'date': '2012-03-18', 'wx': u'chance of  thunderstorms'},
-        {'temp': u'66', 'sky': u'72', 'qpf': u'0.00', 'sym': u'ntsra40.jpg', 'wgust': '6.9', 'rhm': u'58', 'pop12': u'30', 'wspd': '4.6', 'time': '20:00:00', 'date': '2012-03-18', 'wx': u'chance of  thunderstorms'},
-        {'temp': u'61', 'sky': u'72', 'sym': u'nra30.jpg', 'wgust': '5.8', 'rhm': u'69', 'wspd': '4.6', 'time': '23:00:00', 'date': '2012-03-18', 'wx': u'chance of light rain showers'},
-        {'temp': u'57', 'sky': u'72', 'qpf': u'0.00', 'sym': u'nra30.jpg', 'wgust': '4.6', 'rhm': u'80', 'wspd': '3.5', 'time': '02:00:00', 'date': '2012-03-19', 'wx': u'slight chance of light rain showers'},
-        {'temp': u'54', 'sky': u'67', 'sym': u'nra30.jpg', 'wgust': '4.6', 'rhm': u'87', 'wspd': '3.5', 'time': '05:00:00', 'date': '2012-03-19', 'wx': u'slight chance of light rain showers'},
-        {'temp': u'54', 'sky': u'62', 'qpf': u'0.00', 'sym': u'shra30.jpg', 'wgust': '4.6', 'rhm': u'83', 'pop12': u'18', 'wspd': '3.5', 'time': '08:00:00', 'date': '2012-03-19', 'wx': u'slight chance of light rain showers'},
-        {'temp': u'64', 'sky': u'58', 'sym': u'shra20.jpg', 'wgust': '6.9', 'rhm': u'62', 'wspd': '5.8', 'time': '11:00:00', 'date': '2012-03-19', 'wx': u'slight chance of light rain showers'},
-        {'temp': u'72', 'sky': u'55', 'qpf': u'0.00', 'sym': u'shra20.jpg', 'wgust': '9.2', 'rhm': u'50', 'wspd': '6.9', 'time': '14:00:00', 'date': '2012-03-19', 'wx': u'slight chance of light rain showers'},
-        {'temp': u'75', 'sky': u'52', 'sym': u'bkn.jpg', 'wgust': '9.2', 'rhm': u'45', 'wspd': '6.9', 'time': '17:00:00', 'date': '2012-03-19', 'wx': ''},
-        {'temp': u'69', 'sky': u'50', 'sym': u'nsct.jpg', 'wgust': '9.2', 'rhm': u'53', 'pop12': u'11', 'wspd': '6.9', 'time': '20:00:00', 'date': '2012-03-19', 'wx': ''},
-        {'temp': u'57', 'sky': u'48', 'sym': u'nsct.jpg', 'rhm': u'77', 'wspd': '4.6', 'time': '02:00:00', 'date': '2012-03-20', 'wx': ''},
-        {'temp': u'53', 'sky': u'46', 'sym': u'sct.jpg', 'rhm': u'90', 'pop12': u'9', 'wspd': '4.6', 'time': '08:00:00', 'date': '2012-03-20', 'wx': ''},
-        {'temp': u'72', 'sky': u'44', 'sym': u'sct.jpg', 'rhm': u'47', 'wspd': '2.3', 'time': '14:00:00', 'date': '2012-03-20', 'wx': ''},
-        {'temp': u'70', 'sky': u'40', 'sym': u'nsct.jpg', 'rhm': u'49', 'pop12': u'12', 'wspd': '5.8', 'time': '20:00:00', 'date': '2012-03-20', 'wx': ''},
-        {'temp': u'59', 'sky': u'40', 'sym': u'nsct.jpg', 'rhm': u'78', 'wspd': '6.9', 'time': '02:00:00', 'date': '2012-03-21', 'wx': ''},
-        {'temp': u'55', 'sky': u'41', 'sym': u'sct.jpg', 'rhm': u'90', 'pop12': u'15', 'wspd': '8.1', 'time': '08:00:00', 'date': '2012-03-21', 'wx': ''},
-        {'temp': u'71', 'sky': u'48', 'sym': u'sct.jpg', 'rhm': u'49', 'wspd': '8.1', 'time': '14:00:00', 'date': '2012-03-21', 'wx': ''},
-        {'temp': u'68', 'sky': u'52', 'sym': u'nra20.jpg', 'rhm': u'57', 'pop12': u'22', 'wspd': '9.2', 'time': '20:00:00', 'date': '2012-03-21', 'wx': u'slight chance of light rain showers'},
-        {'temp': u'55', 'sky': u'59', 'sym': u'nra20.jpg', 'rhm': u'77', 'wspd': '9.2', 'time': '02:00:00', 'date': '2012-03-22', 'wx': u'slight chance of light rain showers'},
-        {'temp': u'51', 'sky': u'65', 'sym': u'shra20.jpg', 'rhm': u'86', 'pop12': u'21', 'wspd': '8.1', 'time': '08:00:00', 'date': '2012-03-22', 'wx': u'slight chance of light rain showers'},
-        {'temp': u'68', 'sky': u'57', 'sym': u'shra20.jpg', 'rhm': u'51', 'wspd': '6.9', 'time': '14:00:00', 'date': '2012-03-22', 'wx': u'slight chance of light rain showers'},
-        {'temp': u'65', 'sky': u'57', 'sym': u'nra20.jpg', 'rhm': u'57', 'pop12': u'37', 'wspd': '8.1', 'time': '20:00:00', 'date': '2012-03-22', 'wx': u'slight chance of light rain showers'},
-        {'temp': u'54', 'sky': u'57', 'sym': u'nra40.jpg', 'rhm': u'75', 'wspd': '6.9', 'time': '02:00:00', 'date': '2012-03-23', 'wx': u'chance of light rain showers'},
-        {'temp': u'51', 'sky': u'65', 'sym': u'tsra40.jpg', 'rhm': u'80', 'pop12': u'40', 'wspd': '8.1', 'time': '08:00:00', 'date': '2012-03-23', 'wx': u'chance of light rain showers'},
-        {'temp': u'67', 'sky': u'63', 'sym': u'tsra40.jpg', 'rhm': u'47', 'wspd': '4.6', 'time': '14:00:00', 'date': '2012-03-23', 'wx': u'chance of light rain showers'},
-        {'temp': u'66', 'sky': u'62', 'sym': u'ntsra40.jpg', 'rhm': u'51', 'wspd': '5.8', 'time': '20:00:00', 'date': '2012-03-23', 'wx': u'chance of light rain showers'}
+        {'date': '2012-03-17', 'snow_amount': u'0.00', 'rain_amount': u'0.00', 'precip': u'34', 'time': '08:00:00'},
+        {'temp': u'68', 'sky': u'69', 'rain_amount': u'0.00', 'snow_amount': u'0.00', 'symbol': u'shra30.jpg', 'wind_gust': '5.8', 'humidity': u'55', 'wind_sustained': '5.8', 'time': '14:00:00', 'date': '2012-03-17', 'weather': u'slight chance of light rain showers'},
+        {'temp': u'72', 'sky': u'72', 'symbol': u'tsra30.jpg', 'wind_gust': '5.8', 'humidity': u'46', 'wind_sustained': '5.8', 'time': '17:00:00', 'date': '2012-03-17', 'weather': u'chance of light rain showers'},
+        {'temp': u'66', 'sky': u'78', 'rain_amount': u'0.02', 'snow_amount': u'0.00', 'symbol': u'ntsra30.jpg', 'wind_gust': '3.5', 'humidity': u'58', 'precip': u'38', 'wind_sustained': '3.5', 'time': '20:00:00', 'date': '2012-03-17', 'weather': u'chance of light rain showers'},
+        {'temp': u'61', 'sky': u'82', 'symbol': u'ntsra40.jpg', 'wind_gust': '3.5', 'humidity': u'70', 'wind_sustained': '3.5', 'time': '23:00:00', 'date': '2012-03-17', 'weather': u'chance of light rain showers'},
+        {'temp': u'59', 'sky': u'86', 'rain_amount': u'0.02', 'snow_amount': u'0.00', 'symbol': u'nra40.jpg', 'wind_gust': '2.3', 'humidity': u'77', 'wind_sustained': '2.3', 'time': '02:00:00', 'date': '2012-03-18', 'weather': u'chance of light rain showers'},
+        {'temp': u'57', 'sky': u'91', 'symbol': u'nra40.jpg', 'wind_gust': '2.3', 'humidity': u'84', 'wind_sustained': '2.3', 'time': '05:00:00', 'date': '2012-03-18', 'weather': u'chance of light rain showers'},
+        {'temp': u'55', 'sky': u'95', 'rain_amount': u'0.06', 'snow_amount': u'0.00', 'symbol': u'shra40.jpg', 'wind_gust': '4.6', 'humidity': u'83', 'precip': u'41', 'wind_sustained': '3.5', 'time': '08:00:00', 'date': '2012-03-18', 'weather': u'chance of light rain showers'},
+        {'temp': u'63', 'sky': u'89', 'symbol': u'shra40.jpg', 'wind_gust': '6.9', 'humidity': u'70', 'wind_sustained': '5.8', 'time': '11:00:00', 'date': '2012-03-18', 'weather': u'chance of light rain showers'},
+        {'temp': u'68', 'sky': u'84', 'rain_amount': u'0.04', 'snow_amount': u'0.00', 'symbol': u'tsra40.jpg', 'wind_gust': '9.2', 'humidity': u'61', 'wind_sustained': '6.9', 'time': '14:00:00', 'date': '2012-03-18', 'weather': u'chance of thunderstorms'},
+        {'temp': u'70', 'sky': u'78', 'symbol': u'tsra40.jpg', 'wind_gust': '8.1', 'humidity': u'53', 'wind_sustained': '5.8', 'time': '17:00:00', 'date': '2012-03-18', 'weather': u'chance of thunderstorms'},
+        {'temp': u'66', 'sky': u'72', 'rain_amount': u'0.00', 'symbol': u'ntsra40.jpg', 'wind_gust': '6.9', 'humidity': u'58', 'precip': u'30', 'wind_sustained': '4.6', 'time': '20:00:00', 'date': '2012-03-18', 'weather': u'chance of thunderstorms'},
+        {'temp': u'61', 'sky': u'72', 'symbol': u'nra30.jpg', 'wind_gust': '5.8', 'humidity': u'69', 'wind_sustained': '4.6', 'time': '23:00:00', 'date': '2012-03-18', 'weather': u'chance of light rain showers'},
+        {'temp': u'57', 'sky': u'72', 'rain_amount': u'0.00', 'symbol': u'nra30.jpg', 'wind_gust': '4.6', 'humidity': u'80', 'wind_sustained': '3.5', 'time': '02:00:00', 'date': '2012-03-19', 'weather': u'slight chance of light rain showers'},
+        {'temp': u'54', 'sky': u'67', 'symbol': u'nra30.jpg', 'wind_gust': '4.6', 'humidity': u'87', 'wind_sustained': '3.5', 'time': '05:00:00', 'date': '2012-03-19', 'weather': u'slight chance of light rain showers'},
+        {'temp': u'54', 'sky': u'62', 'rain_amount': u'0.00', 'symbol': u'shra30.jpg', 'wind_gust': '4.6', 'humidity': u'83', 'precip': u'18', 'wind_sustained': '3.5', 'time': '08:00:00', 'date': '2012-03-19', 'weather': u'slight chance of light rain showers'},
+        {'temp': u'64', 'sky': u'58', 'symbol': u'shra20.jpg', 'wind_gust': '6.9', 'humidity': u'62', 'wind_sustained': '5.8', 'time': '11:00:00', 'date': '2012-03-19', 'weather': u'slight chance of light rain showers'},
+        {'temp': u'72', 'sky': u'55', 'rain_amount': u'0.00', 'symbol': u'shra20.jpg', 'wind_gust': '9.2', 'humidity': u'50', 'wind_sustained': '6.9', 'time': '14:00:00', 'date': '2012-03-19', 'weather': u'slight chance of light rain showers'},
+        {'temp': u'75', 'sky': u'52', 'symbol': u'bkn.jpg', 'wind_gust': '9.2', 'humidity': u'45', 'wind_sustained': '6.9', 'time': '17:00:00', 'date': '2012-03-19', 'weather': ''},
+        {'temp': u'69', 'sky': u'50', 'symbol': u'nsct.jpg', 'wind_gust': '9.2', 'humidity': u'53', 'precip': u'11', 'wind_sustained': '6.9', 'time': '20:00:00', 'date': '2012-03-19', 'weather': ''},
+        {'temp': u'57', 'sky': u'48', 'symbol': u'nsct.jpg', 'humidity': u'77', 'wind_sustained': '4.6', 'time': '02:00:00', 'date': '2012-03-20', 'weather': ''},
+        {'temp': u'53', 'sky': u'46', 'symbol': u'sct.jpg', 'humidity': u'90', 'precip': u'9', 'wind_sustained': '4.6', 'time': '08:00:00', 'date': '2012-03-20', 'weather': ''},
+        {'temp': u'72', 'sky': u'44', 'symbol': u'sct.jpg', 'humidity': u'47', 'wind_sustained': '2.3', 'time': '14:00:00', 'date': '2012-03-20', 'weather': ''},
+        {'temp': u'70', 'sky': u'40', 'symbol': u'nsct.jpg', 'humidity': u'49', 'precip': u'12', 'wind_sustained': '5.8', 'time': '20:00:00', 'date': '2012-03-20', 'weather': ''},
+        {'temp': u'59', 'sky': u'40', 'symbol': u'nsct.jpg', 'humidity': u'78', 'wind_sustained': '6.9', 'time': '02:00:00', 'date': '2012-03-21', 'weather': ''},
+        {'temp': u'55', 'sky': u'41', 'symbol': u'sct.jpg', 'humidity': u'90', 'precip': u'15', 'wind_sustained': '8.1', 'time': '08:00:00', 'date': '2012-03-21', 'weather': ''},
+        {'temp': u'71', 'sky': u'48', 'symbol': u'sct.jpg', 'humidity': u'49', 'wind_sustained': '8.1', 'time': '14:00:00', 'date': '2012-03-21', 'weather': ''},
+        {'temp': u'68', 'sky': u'52', 'symbol': u'nra20.jpg', 'humidity': u'57', 'precip': u'22', 'wind_sustained': '9.2', 'time': '20:00:00', 'date': '2012-03-21', 'weather': u'slight chance of light rain showers'},
+        {'temp': u'55', 'sky': u'59', 'symbol': u'nra20.jpg', 'humidity': u'77', 'wind_sustained': '9.2', 'time': '02:00:00', 'date': '2012-03-22', 'weather': u'slight chance of light rain showers'},
+        {'temp': u'51', 'sky': u'65', 'symbol': u'shra20.jpg', 'humidity': u'86', 'precip': u'21', 'wind_sustained': '8.1', 'time': '08:00:00', 'date': '2012-03-22', 'weather': u'slight chance of light rain showers'},
+        {'temp': u'68', 'sky': u'57', 'symbol': u'shra20.jpg', 'humidity': u'51', 'wind_sustained': '6.9', 'time': '14:00:00', 'date': '2012-03-22', 'weather': u'slight chance of light rain showers'},
+        {'temp': u'65', 'sky': u'57', 'symbol': u'nra20.jpg', 'humidity': u'57', 'precip': u'37', 'wind_sustained': '8.1', 'time': '20:00:00', 'date': '2012-03-22', 'weather': u'slight chance of light rain showers'},
+        {'temp': u'54', 'sky': u'57', 'symbol': u'nra40.jpg', 'humidity': u'75', 'wind_sustained': '6.9', 'time': '02:00:00', 'date': '2012-03-23', 'weather': u'chance of light rain showers'},
+        {'temp': u'51', 'sky': u'65', 'symbol': u'tsra40.jpg', 'humidity': u'80', 'precip': u'40', 'wind_sustained': '8.1', 'time': '08:00:00', 'date': '2012-03-23', 'weather': u'chance of light rain showers'},
+        {'temp': u'67', 'sky': u'63', 'symbol': u'tsra40.jpg', 'humidity': u'47', 'wind_sustained': '4.6', 'time': '14:00:00', 'date': '2012-03-23', 'weather': u'chance of light rain showers'},
+        {'temp': u'66', 'sky': u'62', 'symbol': u'ntsra40.jpg', 'humidity': u'51', 'wind_sustained': '5.8', 'time': '20:00:00', 'date': '2012-03-23', 'weather': u'chance of light rain showers'}
     ]
 
     expected_daily = [
-        {'qpf': 0.0, 'maxt': u'76', 'wgust': '9.2', 'sym': u'shra20.jpg', 'rhm': 65.714285714285708,
-            'pop12': u'11', 'wspd': '5.3', 'date': u'2012-03-19', 'wx': u'slight chance of light rain showers'},
-        {'qpf': 0.12, 'snow': 0.0, 'maxt': u'71', 'wgust': '9.2', 'sym': u'shra40.jpg', 'rhm': 69.375,
-            'pop12': u'30', 'wspd': '4.5', 'date': u'2012-03-18', 'wx': u'chance of light rain showers'},
-        {'qpf': 0.02, 'maxt': u'73', 'wgust': '5.8', 'sym': u'tsra30.jpg', 'rhm': 57.25,
-            'pop12': u'38', 'wspd': '4.6', 'date': u'2012-03-17', 'wx': u'slight chance of light rain showers'},
-        {'maxt': u'76', 'sym': u'nsct.jpg', 'rhm': 65.75, 'pop12': u'12', 'wspd': '4.3',
-            'date': u'2012-03-20', 'wx': ''}, 
-        {'maxt': u'74', 'sym': u'sct.jpg', 'rhm': 68.5, 'pop12': u'22', 'wspd': '8.1',
-            'date': u'2012-03-21', 'wx': ''},
-        {'maxt': u'71', 'sym': u'shra20.jpg', 'rhm': 67.75, 'pop12': u'37', 'wspd': '8.1',
-            'date': u'2012-03-22', 'wx': u'slight chance of light rain showers'},
-        {'maxt': u'70', 'sym': u'tsra40.jpg', 'rhm': 63.25, 'pop12': None, 'wspd': '6.3',
-            'date': u'2012-03-23', 'wx': u'chance of light rain showers'}
+        {'rain_amount': 0.02, 'high': u'73', 'wind_gust': '5.8', 'symbol': u'tsra30.jpg', 'humidity': 57.25,
+            'precip_day': u'38', 'wind_sustained': '4.6', 'date': u'2012-03-17', 'weather': u'slight chance of light rain showers'},
+        {'rain_amount': 0.12, 'snow_amount': 0.0, 'high': u'71', 'wind_gust': '9.2', 'symbol': u'shra40.jpg', 'humidity': 69.375,
+            'precip_day': u'41', 'wind_sustained': '4.5', 'date': u'2012-03-18', 'weather': u'chance of light rain showers'},
+        {'rain_amount': 0.0, 'high': u'76', 'wind_gust': '9.2', 'symbol': u'shra20.jpg', 'humidity': 65.714285714285708,
+            'precip_day': u'18', 'wind_sustained': '5.3', 'date': u'2012-03-19', 'weather': u'slight chance of light rain showers'},
+        {'high': u'76', 'symbol': u'nsct.jpg', 'humidity': 65.75, 'precip_day': u'9', 'wind_sustained': '4.3',
+            'date': u'2012-03-20', 'weather': ''}, 
+        {'high': u'74', 'symbol': u'sct.jpg', 'humidity': 68.5, 'precip_day': u'15', 'wind_sustained': '8.1',
+            'date': u'2012-03-21', 'weather': ''},
+        {'high': u'71', 'symbol': u'shra20.jpg', 'humidity': 67.75, 'precip_day': u'21', 'wind_sustained': '8.1',
+            'date': u'2012-03-22', 'weather': u'slight chance of light rain showers'},
+        {'high': u'70', 'symbol': u'tsra40.jpg', 'humidity': 63.25, 'precip_day': u'40', 'wind_sustained': '6.3',
+            'date': u'2012-03-23', 'weather': u'chance of light rain showers'}
     ]
 
 
@@ -220,7 +220,7 @@ class TestForecast(unittest.TestCase):
         # Assert all values are as expected
         for i in range(1, len(expected)):
             for k, v in expected[i].iteritems():
-                self.assertEqual(expected[i][k], daily_data[i][k])
+                self.assertEqual(expected[i][k], daily_data[i][k], 'Expected {0} got {1} for {2} on {3}'.format(expected[i][k], daily_data[i][k], k, daily_data[i]['date']))
 
     def test_hourly(self):
 
@@ -236,7 +236,8 @@ class TestForecast(unittest.TestCase):
         # Assert all values are as expected
         for i in range(1, len(expected)):
             for k, v in expected[i].iteritems():
-                self.assertEqual(expected[i][k], hourly_data[i][k])
+                self.assertEqual(expected[i][k], hourly_data[i][k], "Expected '{0}' got '{1}' for {2} on {3} {4}".format(expected[i][k], hourly_data[i][k], k, hourly_data[i]['date'], hourly_data[i]['time']))
+                #self.assertEqual(expected[i][k], hourly_data[i][k])
 
     def test_process_xml(self):
 
@@ -257,6 +258,11 @@ class TestForecast(unittest.TestCase):
         for i in range(1, len(expected)):
             for k, v in expected[i].iteritems():
                 self.assertEqual(expected[i][k], hourly_data[i][k])
+
+    def test_average(self):
+
+        vals = [3, 3, 3, 5, 6, 6, 6]
+        self.assertEquals(4.6, round(forecast._average(vals), 1))
 
 if __name__ == '__main__':
     unittest.main()
