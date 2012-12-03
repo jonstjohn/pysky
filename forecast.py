@@ -166,7 +166,7 @@ def _first_nonempty(values):
         if len(val) > 0:
             return val
 
-def _frequent(values):
+def _frequent_sym(values):
     """
     Aggregate by most frequently used values
     Args: values - list of values
@@ -177,6 +177,9 @@ def _frequent(values):
 
     counts = {}
     for val in values:
+        # Skip night-time
+        if val.split('/')[-1][0] == 'n':
+            continue
         if not counts.has_key(val):
             counts[val] = 0
         counts[val] += 1
@@ -322,7 +325,7 @@ _daily_config = {
     'wind_gust': {'code': 'wgust', 'aggregator': max, 'formatter': _format_wind},
     'wind_sustained': {'code': 'wspd', 'aggregator': _average, 'formatter': _format_wind},
     'weather': {'code': 'wx', 'aggregator': _first_nonempty, 'pre_filter': _pre_weather, 'formatter': _format_weather},
-    'symbol': {'code': 'sym', 'aggregator': _frequent, 'pre_filter': _pre_wsym, 'formatter': _format_wsym}
+    'symbol': {'code': 'sym', 'aggregator': _frequent_sym, 'pre_filter': _pre_wsym, 'formatter': _format_wsym}
 }
 
 _hourly_config = {
