@@ -46,11 +46,11 @@ class TestForecast(unittest.TestCase):
     expected_daily = [
         {'rain_amount': 0.02, 'high': u'73', 'wind_gust': '5.8', 'symbol': u'tsra30.jpg', 'humidity': 57.25,
             'precip_day': u'38', 'wind_sustained': '4.6', 'date': u'2012-03-17', 'weather': u'slight chance of light rain showers'},
-        {'rain_amount': 0.12, 'snow_amount': 0.0, 'high': u'71', 'wind_gust': '9.2', 'symbol': u'shra40.jpg', 'humidity': 69.375,
+        {'rain_amount': 0.12, 'snow_amount': 0.0, 'high': u'71', 'wind_gust': '9.2', 'symbol': u'tsra40.jpg', 'humidity': 69.375,
             'precip_day': u'41', 'wind_sustained': '4.5', 'date': u'2012-03-18', 'weather': u'chance of light rain showers'},
         {'rain_amount': 0.0, 'high': u'76', 'wind_gust': '9.2', 'symbol': u'shra20.jpg', 'humidity': 65.714285714285708,
             'precip_day': u'18', 'wind_sustained': '5.3', 'date': u'2012-03-19', 'weather': u'slight chance of light rain showers'},
-        {'high': u'76', 'symbol': u'nsct.jpg', 'humidity': 65.75, 'precip_day': u'9', 'wind_sustained': '4.3',
+        {'high': u'76', 'symbol': u'sct.jpg', 'humidity': 65.75, 'precip_day': u'9', 'wind_sustained': '4.3',
             'date': u'2012-03-20', 'weather': ''}, 
         {'high': u'74', 'symbol': u'sct.jpg', 'humidity': 68.5, 'precip_day': u'15', 'wind_sustained': '8.1',
             'date': u'2012-03-21', 'weather': ''},
@@ -198,9 +198,9 @@ class TestForecast(unittest.TestCase):
 
         self.assertEqual(forecast._average(['1', '2', '3', '4']), 2.5)
 
-    def test_frequent(self):
+    def test_frequent_sym(self):
 
-        self.assertEqual(forecast._frequent(['apple', 'orange', 'banana', 'apple']), 'apple')
+        self.assertEqual(forecast._frequent_sym(['apple', 'orange', 'banana', 'apple']), 'apple')
 
     def test_daily(self):
 

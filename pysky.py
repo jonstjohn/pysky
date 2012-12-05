@@ -49,7 +49,7 @@ def download(grib2_dir = None):
     import os
 
     grib2.verbose = verbose
-    grib2_dir = grib2_dir if grib2_dir else os.path.realpath(__file__) # use current dir if none provided
+    grib2_dir = grib2_dir if grib2_dir else os.path.abspath(os.path.dirname(__file__)) # use current dir if none provided
     grib2.download(grib2_dir)
 
 
