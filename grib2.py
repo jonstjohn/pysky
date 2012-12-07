@@ -15,9 +15,10 @@ def download(data_dir):
     args:
         data_dir Directory to store data files
     """
-    import urllib, re, os, sys, time
+    import urllib, re, os, sys, time, urllib2, dateutil
     from datetime import datetime
     from dateutil import tz
+    from dateutil.parser import parse
 
     # Loop over directories that have forecast data files
     for dir in ['VP.001-003','VP.004-007']: # loop over remote directories
@@ -44,15 +45,6 @@ def download(data_dir):
                 # Split line to get date and filename
                 month, day, rtime, filename = re.split("\s+", line)[5:9]
 
-                # Convert date to local timezone
-                from_zone = tz.tzutc()
-                to_zone = tz.tzlocal()
-                today = datetime.today()
-                year = today.strftime('%Y')
-                utc = datetime.strptime('{0}/{1} {2} @ {3}'.format(month, day, year, rtime), '%b/%d %Y @ %H:%M')
-                utc = utc.replace(tzinfo = from_zone)
-                remote_time = time.mktime(utc.astimezone(to_zone).timetuple())
-
                 # Split filename to get noaa param name
                 param = filename.split('.')[1]
 
@@ -65,10 +57,14 @@ def download(data_dir):
                     local_path = "{0}/{1}/{2}".format(data_dir, dir, filename)
                     local_time = os.stat(local_path).st_mtime
 
+                    furl = urllib2.urlopen(remote_path)
+                    last_modified_str = furl.info()['Last-Modified']
+                    remote_time = _utc2local(parse(last_modified_str))
+
                     # If file does not exist or the local file is older than the remote file, download
                     if not os.path.exists(local_path) or local_time < remote_time:
                         info('Downloading remote file')
-                        urllib.urlretrieve (remote_path, local_path)
+                        _download_file(furl, local_path)
                         os.utime(local_path, (remote_time, remote_time))
                     # Otherwise, just log some information
                     else:
@@ -114,6 +110,20 @@ def xml(data_dir, latitude, longitude):
 
     # return output
     return xml
+
+def _utc2local(utc):
+    """ Convert utc datetime object to local datetime """
+    from dateutil import tz
+    import time
+    from_zone = tz.tzutc()
+    to_zone = tz.tzlocal()
+    utc = utc.replace(tzinfo = from_zone)
+    return time.mktime(utc.astimezone(to_zone).timetuple())
+
+def _download_file(furl, local_path):
+    """ Download file given a urllib2 urlopen from remote path to local path """
+    with open(local_path, 'wb') as f:
+        f.write(furl.read())
 
 def info(str):
 
