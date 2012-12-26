@@ -1,9 +1,9 @@
 #!/usr/bin/python
 
-import grib2
-import dwml
-import forecast
-import noaa_ws
+from pysky import grib2
+from pysky import dwml
+from pysky import forecast
+from pysky import noaa_ws
 import json
 
 degrib_path = '/usr/local/bin/degrib'

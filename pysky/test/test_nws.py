@@ -1,8 +1,8 @@
 import unittest, os, urllib2, re, datetime
-import noaa_ws, forecast
+from pysky import noaa_ws
 
 from bs4 import BeautifulSoup
-import forecast
+from pysky import forecast
 
 _dow = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 latitude = '38.0676808'

@@ -1,12 +1,33 @@
+from pysky import utils
+
 # Base URL for downloading grib2 files
 base_url = 'http://weather.noaa.gov/pub/SL.us008001/ST.opnl/DF.gr2/DC.ndfd/AR.conus'
 noaa_params = ['maxt', 'temp', 'mint', 'pop12', 'sky', 'wspd', 'apt', 'qpf', 'snow', 'wx', 'wgust', 'icons', 'rhm']
 #noaa_params = ['wx']
 
-verbose = False
-
 # Degrib path
 degrib_path = '/usr/local/bin/degrib'
+
+def download_command_line():
+    """ Handle download from command-line """
+    from optparse import OptionParser
+
+    usage = "usage:\n%prog download [options]"
+    parser = OptionParser(usage)
+
+    parser.add_option('-g', '--grib2-dir', dest='grib2_dir',
+        action='store',
+        help='Directory to download grib2 files to')
+    parser.add_option('-v', '--verbose', dest='verbose', default=False,
+        action='store_true',
+        help='Show verbose output')
+
+    (options, args) = parser.parse_args()
+
+     # use current dir if none provided
+    grib2_dir = options.grib2_dir if options.grib2_dir else os.path.abspath(os.path.dirname(__file__))
+    utils.verbose = options.verbose
+    download(options.grib2_dir)
 
 def download(data_dir):
     """
@@ -27,7 +48,7 @@ def download(data_dir):
 
         data_subdir = "{0}/{1}".format(data_dir, dir)
 
-        info('\nChecking directory {0}'.format(dir))
+        utils.info('\nChecking directory {0}'.format(dir))
 
         # Create directory if it doesn't exist
         if not os.path.exists(data_subdir):
@@ -56,24 +77,24 @@ def download(data_dir):
                     # Local path and time
                     local_path = "{0}/{1}/{2}".format(data_dir, dir, filename)
                     local_time = os.stat(local_path).st_mtime if os.path.exists(local_path) else 0
-                    info("Local: {0} last modified {1}".format(local_path, local_time))
+                    utils.info("Local: {0} last modified {1}".format(local_path, local_time))
 
                     # Remote path and time
                     remote_path = "{0}/{1}/{2}".format(base_url, dir, filename)
                     request = urllib2.urlopen(remote_path)
                     last_modified_str = request.info()['Last-Modified']
                     remote_time = _utc2local(parse(last_modified_str))
-                    info("Remote: {0} last modified {1}".format(remote_path, remote_time))
+                    utils.info("Remote: {0} last modified {1}".format(remote_path, remote_time))
 
                     # If file does not exist or the local file is older than the remote file, download
                     if not os.path.exists(local_path) or local_time < remote_time:
-                        info('Downloading remote file {0}'.format(remote_path))
+                        utils.info('Downloading remote file {0}'.format(remote_path))
                         _download_file(request, local_path)
                         os.utime(local_path, (remote_time, remote_time))
                         files_downloaded = True
                     # Otherwise, just log some information
                     else:
-                        info('Local file is up-to-date, skipping download')
+                        utils.info('Local file is up-to-date, skipping download')
                     
     # Cube data files if any were downloaded
     if files_downloaded:
@@ -81,15 +102,15 @@ def download(data_dir):
             degrib = degrib_path,
             data_dir = data_dir
         )
-        info(cmd)
+        utils.info(cmd)
         output = ""
         for line in os.popen(cmd).readlines():
     
             output += line
     
-        info(output)
+        utils.info(output)
     else:
-        info('No files downloaded - skipping cube')
+        utils.info('No files downloaded - skipping cube')
 
 def xml(data_dir, latitude, longitude):
     """
@@ -109,7 +130,7 @@ def xml(data_dir, latitude, longitude):
     cmd = "{degrib_path} {data_dir}/all.ind -DP -pnt {latitude},{longitude} -XML 1 -geoData {data_dir}/geodata".format(
         data_dir = data_dir, latitude = latitude, longitude = longitude, degrib_path = degrib_path)
 
-    info(cmd)
+    utils.info(cmd)
     xml = ""
     for line in os.popen(cmd).readlines():
 
@@ -148,9 +169,3 @@ def _download_file(request, local_path):
                 sys.stdout.flush()
             chunk = request.read(chunk_size)
         print('')
-
-def info(str):
-
-    if verbose:
-
-        print(str)

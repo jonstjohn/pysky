@@ -1,6 +1,6 @@
 import unittest, os
 
-import forecast
+from pysky import forecast
 
 class TestForecast(unittest.TestCase):
 
