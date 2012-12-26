@@ -27,7 +27,7 @@ def download(data_dir):
 
         data_subdir = "{0}/{1}".format(data_dir, dir)
 
-        info('Checking directory {0}'.format(dir))
+        info('\nChecking directory {0}'.format(dir))
 
         # Create directory if it doesn't exist
         if not os.path.exists(data_subdir):
@@ -53,18 +53,19 @@ def download(data_dir):
                 # Only download files if we are interested in this parameter
                 if param in noaa_params:
 
-                    info("%s last modified %s/%s @ %s" % (filename, month, day, rtime))
-
-                    remote_path = "%s/%s/%s" % (base_url, dir, filename)
+                    # Local path and time
                     local_path = "{0}/{1}/{2}".format(data_dir, dir, filename)
                     local_time = os.stat(local_path).st_mtime if os.path.exists(local_path) else 0
+                    info("Local: {0} last modified {1}".format(local_path, local_time))
 
+                    # Remote path and time
+                    remote_path = "{0}/{1}/{2}".format(base_url, dir, filename)
                     request = urllib2.urlopen(remote_path)
                     last_modified_str = request.info()['Last-Modified']
                     remote_time = _utc2local(parse(last_modified_str))
+                    info("Remote: {0} last modified {1}".format(remote_path, remote_time))
 
                     # If file does not exist or the local file is older than the remote file, download
-                    info('Local file modified: {0} - Remote file modified: {1}'.format(local_time, remote_time))
                     if not os.path.exists(local_path) or local_time < remote_time:
                         info('Downloading remote file {0}'.format(remote_path))
                         _download_file(request, local_path)

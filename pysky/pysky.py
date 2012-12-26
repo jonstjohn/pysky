@@ -1,19 +1,27 @@
 #!/usr/bin/python
 
-import grib2, dwml, forecast, noaa_ws, json
+import grib2
+import dwml
+import forecast
+import noaa_ws
+import json
 
 degrib_path = '/usr/local/bin/degrib'
 verbose = False
 
-def get_forecast(latitude, longitude, include_hourly = False, grib2_dir = None):
+
+def get_forecast(latitude, longitude,
+                 include_hourly=False, grib2_dir=None):
     """
-    Main method determines forecast based on latitude and longitude and returns json-formatted result
+    Main method determines forecast based on latitude and longitude and returns
+    json-formatted result
 
     Args:
         latitude - forecast point latitude
         longitude - forecast point longitude
         include_hourly - flag to include hourly forecast, defaults to false
-        grib2_dir - grib2 data directory, if omitted, the SOAP web service will be used
+        grib2_dir - grib2 data directory, if omitted,
+            the SOAP web service will be used
 
     Returns: json-formatted string - see README
     """
@@ -36,10 +44,11 @@ def get_forecast(latitude, longitude, include_hourly = False, grib2_dir = None):
         info(xml)
 
     # Initialize object for data
-    print(forecast.process_xml(xml, include_hourly)) # TODO fix json call
-    #print(json.dumps(forecast.process_xml(xml, include_hourly))) # TODO fix json call
+    print(forecast.process_xml(xml, include_hourly))  # TODO fix json call
+    #print(json.dumps(forecast.process_xml(xml, include_hourly))) # TODO fix
 
-def download(grib2_dir = None):
+
+def download(grib2_dir=None):
     """
     Download grib2 files
 
