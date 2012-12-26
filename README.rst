@@ -22,7 +22,7 @@ To obtain forecast data, forecast.py is used.  For quick and dirty forecasts, fo
     python bin/download --grib2-dir=/tmp # download data files to /tmp
     python bin/forecast --grib2-dir=/tmp -- 38 -81 # get forecast for latitude 38 and longitude -81
 
-Output for the forecast action are JSON encoded values of the following format:
+Output for the forecast action are JSON encoded values of the following format::
 
     { 
         'daily' : [
