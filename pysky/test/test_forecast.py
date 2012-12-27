@@ -205,7 +205,7 @@ class TestForecast(unittest.TestCase):
     def test_daily(self):
 
         import json
-        f = open('test_xml_data.json', 'r')
+        f = open('pysky/test/test_xml_data.json', 'r')
         xml_data = json.loads(f.read())
         f.close()
 
@@ -225,7 +225,7 @@ class TestForecast(unittest.TestCase):
     def test_hourly(self):
 
         import json
-        f = open('test_xml_data.json', 'r')
+        f = open('pysky/test/test_xml_data.json', 'r')
         xml_data = json.loads(f.read())
         f.close()
 
@@ -241,7 +241,7 @@ class TestForecast(unittest.TestCase):
 
     def test_process_xml(self):
 
-        f = open('test.xml')
+        f = open('pysky/test/test.xml')
         xml = f.read()
         data = forecast.process_xml(xml)
 

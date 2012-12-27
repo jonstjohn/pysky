@@ -1,8 +1,6 @@
 PySky - the Python Weather Toolkit
 ==================================
 
-** Warning: PySky is still under development and incomplete. **
-
 PySky is a python weather toolkit that provides access into a number of publicly available weather databases.  The goal of PySky is to provide a fast and easy-to-use interface to weather data in a pythonic way.  The current implementation focuses on United States weather data from NOAA, although future weather systems will be incorporated.  In particular, it provides hourly and daily forecast summaries.
 
 Working with the module
@@ -17,7 +15,10 @@ To obtain forecast data, forecast.py is used.  For quick and dirty forecasts, fo
     python bin/download (--grib2-dir=DIR) (--verbose)
     python bin/forecast (--hourly) (--grib2-dir=DIR) (--verbose) LATITUDE LONGITUDE
 
-    Examples:
+Examples:
+
+.. code-block:: bash
+
     python bin/download # download to current directory
     python bin/download --grib2-dir=/tmp # download data files to /tmp
     python bin/forecast --grib2-dir=/tmp -- 38 -81 # get forecast for latitude 38 and longitude -81
