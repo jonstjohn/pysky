@@ -1,0 +1,4 @@
+from pysky import grib2
+
+grib2.download_command_line()
+

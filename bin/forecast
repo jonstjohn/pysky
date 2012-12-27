@@ -1,0 +1,3 @@
+from pysky import forecast
+
+forecast.exec_command_line()
