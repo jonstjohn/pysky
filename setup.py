@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='PySky',
-    version='0.1.0',
+    version='0.1.3dev',
     author='Jon St. John',
     author_email='jonstjohn@gmail.com',
     packages=['pysky', 'pysky.test'],
@@ -10,8 +10,8 @@ setup(
     url='http://pypi.python.org/pypi/PySky/',
     license='LICENSE.txt',
     description='Weather toolkit',
-    long_description=open('README.md').read(),
+    long_description=open('README.rst').read(),
     install_requires=[
-        "dateutil >= 1.5",
+        "python-dateutil >= 1.5",
     ],
 )

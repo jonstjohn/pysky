@@ -1,2 +1,6 @@
 include *.txt
+include *.rst
+include *.json
+include *.xml
+include bin/*
 recursive-include docs *.txt
