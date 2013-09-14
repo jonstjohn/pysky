@@ -1,5 +1,6 @@
 from pysky import dwml
 from pysky import utils
+import json
 
 _hourly_params = { 'snow_amount': 'snow', 'temp': 'temp', 'humidity': 'rhm', 'precip': 'pop12', 'rain_amount': 'qpf',
      'sky': 'sky', 'weather': 'wx', 'symbol': 'sym', 'wind_gust': 'wgust', 'wind_sustained': 'wspd'}
@@ -67,8 +68,7 @@ def get_forecast(latitude, longitude,
         utils.info(xml)
 
     # Initialize object for data
-    print(process_xml(xml, include_hourly))  # TODO fix json call
-    #print(json.dumps(process_xml(xml, include_hourly))) # TODO fix
+    return json.dumps(process_xml(xml, include_hourly))
 
 
 def exec_command_line():
@@ -98,7 +98,7 @@ def exec_command_line():
 
     latitude = args[0]
     longitude = args[1]
-    get_forecast(latitude, longitude, options.include_hourly, options.grib2_dir)
+    print(get_forecast(latitude, longitude, options.include_hourly, options.grib2_dir))
 
 def process_xml(xml, include_hourly = False):
     """
